@@ -8,6 +8,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -60,157 +61,65 @@ public class big_shovel extends DiggerItem {
             if (!level.isClientSide && state.getDestroySpeed(level, pos) != 0.0F && tool.damagePerBlock() > 0) {
                 stack.hurtAndBreak(tool.damagePerBlock(), miningEntity, EquipmentSlot.MAINHAND);
             }
+            int range = 3;
+            range=(range-1)/2;
             Direction direction = getTargetedFace();
             if (!miningEntity.isCrouching()) {
                 if (miningEntity instanceof ServerPlayer && mining) {
                     ServerPlayer player = (ServerPlayer) miningEntity;
                     if (direction == Direction.DOWN || direction == Direction.UP) {
-                        //are calculated positions
-                        BlockPos pos1 = new BlockPos(pos.getX() - 1, pos.getY(), pos.getZ());
-                        BlockPos pos2 = new BlockPos(pos.getX() + 1, pos.getY(), pos.getZ());
-                        BlockPos pos3 = new BlockPos(pos.getX(), pos.getY(), pos.getZ() + 1);
-                        BlockPos pos4 = new BlockPos(pos.getX(), pos.getY(), pos.getZ() - 1);
-                        BlockPos pos5 = new BlockPos(pos.getX() - 1, pos.getY(), pos.getZ() + 1);
-                        BlockPos pos6 = new BlockPos(pos.getX() + 1, pos.getY(), pos.getZ() + 1);
-                        BlockPos pos7 = new BlockPos(pos.getX() + 1, pos.getY(), pos.getZ() - 1);
-                        BlockPos pos8 = new BlockPos(pos.getX() - 1, pos.getY(), pos.getZ() - 1);
-                        BlockState state1 = level.getBlockState(pos1);
-                        BlockState state2 = level.getBlockState(pos2);
-                        BlockState state3 = level.getBlockState(pos3);
-                        BlockState state4 = level.getBlockState(pos4);
-                        BlockState state5 = level.getBlockState(pos5);
-                        BlockState state6 = level.getBlockState(pos6);
-                        BlockState state7 = level.getBlockState(pos7);
-                        BlockState state8 = level.getBlockState(pos8);
-                        //DESTRUCTING BLOCK AROUND
                         mining = false;
+                        for (int i = -range; i <= range; i++){
+                            for (int j = -range; j <= range; j++) {
+                                //are calculated positions
+                                BlockPos pos1 = new BlockPos(pos.getX()+i, pos.getY(), pos.getZ()+j);
+                                BlockState state1 = level.getBlockState(pos1);
+                                //DESTRUCTING BLOCK AROUND
+                                if (!state1.is(Blocks.BEDROCK) && pos1 != pos || state1.is(Blocks.AIR) && pos1 != pos) {
+                                    player.gameMode.destroyBlock(pos1);
+                                }
+                                stack.setDamageValue(Math.max(0, stack.getDamageValue() - 1));
 
-
-                        if (!state1.is(Blocks.BEDROCK) || state1.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos1);
+                            }
                         }
-                        if (!state2.is(Blocks.BEDROCK) || state2.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos2);
-                        }
-                        if (!state3.is(Blocks.BEDROCK) || state3.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos3);
-                        }
-                        if (!state4.is(Blocks.BEDROCK) || state4.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos4);
-                        }
-                        if (!state5.is(Blocks.BEDROCK) || state5.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos5);
-                        }
-                        if (!state6.is(Blocks.BEDROCK) || state6.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos6);
-                        }
-                        if (!state7.is(Blocks.BEDROCK) || state7.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos7);
-                        }
-                        if (!state8.is(Blocks.BEDROCK) || state8.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos8);
-                        }
-
                         mining = true;
                     } else if (direction == Direction.NORTH || direction == Direction.SOUTH) {
-                        //are calculated positions
-                        BlockPos pos1 = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                        BlockPos pos2 = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
-                        BlockPos pos3 = new BlockPos(pos.getX() + 1, pos.getY(), pos.getZ());
-                        BlockPos pos4 = new BlockPos(pos.getX() - 1, pos.getY(), pos.getZ());
-                        BlockPos pos5 = new BlockPos(pos.getX() - 1, pos.getY() + 1, pos.getZ());
-                        BlockPos pos6 = new BlockPos(pos.getX() + 1, pos.getY() - 1, pos.getZ());
-                        BlockPos pos7 = new BlockPos(pos.getX() + 1, pos.getY() + 1, pos.getZ());
-                        BlockPos pos8 = new BlockPos(pos.getX() - 1, pos.getY() - 1, pos.getZ());
-                        BlockState state1 = level.getBlockState(pos1);
-                        BlockState state2 = level.getBlockState(pos2);
-                        BlockState state3 = level.getBlockState(pos3);
-                        BlockState state4 = level.getBlockState(pos4);
-                        BlockState state5 = level.getBlockState(pos5);
-                        BlockState state6 = level.getBlockState(pos6);
-                        BlockState state7 = level.getBlockState(pos7);
-                        BlockState state8 = level.getBlockState(pos8);
-                        //DESTRUCTING BLOCK AROUND
                         mining = false;
+                        for (int i = -range; i <= range; i++){
+                            for (int j = -range; j <= range; j++) {
+                                //are calculated positions
+                                BlockPos pos1 = new BlockPos(pos.getX()+i, pos.getY()+j, pos.getZ());
+                                BlockState state1 = level.getBlockState(pos1);
+                                //DESTRUCTING BLOCK AROUND
+                                if (!state1.is(Blocks.BEDROCK) && pos1 != pos || state1.is(Blocks.AIR) && pos1 != pos) {
+                                    player.gameMode.destroyBlock(pos1);
+                                }
+                                stack.setDamageValue(Math.max(0, stack.getDamageValue() - 1));
 
 
-                        if (!state1.is(Blocks.BEDROCK) || state1.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos1);
+                            }
                         }
-                        if (!state2.is(Blocks.BEDROCK) || state2.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos2);
-                        }
-                        if (!state3.is(Blocks.BEDROCK) || state3.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos3);
-                        }
-                        if (!state4.is(Blocks.BEDROCK) || state4.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos4);
-                        }
-                        if (!state5.is(Blocks.BEDROCK) || state5.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos5);
-                        }
-                        if (!state6.is(Blocks.BEDROCK) || state6.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos6);
-                        }
-                        if (!state7.is(Blocks.BEDROCK) || state7.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos7);
-                        }
-                        if (!state8.is(Blocks.BEDROCK) || state8.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos8);
-                        }
-
                         mining = true;
                     } else if (direction == Direction.EAST || direction == Direction.WEST) {
-                        //are calculated positions
-                        BlockPos pos1 = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                        BlockPos pos2 = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
-                        BlockPos pos3 = new BlockPos(pos.getX(), pos.getY(), pos.getZ() + 1);
-                        BlockPos pos4 = new BlockPos(pos.getX(), pos.getY(), pos.getZ() - 1);
-                        BlockPos pos5 = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ() + 1);
-                        BlockPos pos6 = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ() + 1);
-                        BlockPos pos7 = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ() - 1);
-                        BlockPos pos8 = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ() - 1);
-                        BlockState state1 = level.getBlockState(pos1);
-                        BlockState state2 = level.getBlockState(pos2);
-                        BlockState state3 = level.getBlockState(pos3);
-                        BlockState state4 = level.getBlockState(pos4);
-                        BlockState state5 = level.getBlockState(pos5);
-                        BlockState state6 = level.getBlockState(pos6);
-                        BlockState state7 = level.getBlockState(pos7);
-                        BlockState state8 = level.getBlockState(pos8);
-                        //DESTRUCTING BLOCK AROUND
                         mining = false;
+                        for (int i = -range; i <= range; i++){
+                            for (int j = -range; j <= range; j++) {
+                                //are calculated positions
+                                BlockPos pos1 = new BlockPos(pos.getX(), pos.getY()+j, pos.getZ()+i);
+                                BlockState state1 = level.getBlockState(pos1);
+                                //DESTRUCTING BLOCK AROUND
+                                if (!state1.is(Blocks.BEDROCK) && pos1 != pos || state1.is(Blocks.AIR) && pos1 != pos) {
+                                    player.gameMode.destroyBlock(pos1);
+                                }
+                                stack.setDamageValue(Math.max(0, stack.getDamageValue() - 1));
 
-
-                        if (!state1.is(Blocks.BEDROCK) || state1.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos1);
+                            }
                         }
-                        if (!state2.is(Blocks.BEDROCK) || state2.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos2);
-                        }
-                        if (!state3.is(Blocks.BEDROCK) || state3.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos3);
-                        }
-                        if (!state4.is(Blocks.BEDROCK) || state4.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos4);
-                        }
-                        if (!state5.is(Blocks.BEDROCK) || state5.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos5);
-                        }
-                        if (!state6.is(Blocks.BEDROCK) || state6.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos6);
-                        }
-                        if (!state7.is(Blocks.BEDROCK) || state7.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos7);
-                        }
-                        if (!state8.is(Blocks.BEDROCK) || state8.is(Blocks.AIR)) {
-                            player.gameMode.destroyBlock(pos8);
-                        }
-
                         mining = true;
                     }
                 }
             }
+
             return true;
         }
 
@@ -225,7 +134,7 @@ public class big_shovel extends DiggerItem {
         LivingEntity miningEntity = context.getPlayer();
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);
-
+        InteractionHand slot = context.getHand();
 
         Tool tool = (Tool) stack.get(DataComponents.TOOL);
         if (tool == null) {
@@ -234,196 +143,83 @@ public class big_shovel extends DiggerItem {
             if (!level.isClientSide && state.getDestroySpeed(level, pos) != 0.0F && tool.damagePerBlock() > 0) {
                 stack.hurtAndBreak(tool.damagePerBlock(), miningEntity, EquipmentSlot.MAINHAND);
             }
-            Direction direction1 = getTargetedFace();
+            int range = 3;
+            range=(range-1)/2;
             if (!miningEntity.isCrouching()) {
                 if (miningEntity instanceof ServerPlayer && mining) {
                     ServerPlayer player = (ServerPlayer) miningEntity;
-                    ServerLevel Level = player.serverLevel();
                     if (direction == Direction.DOWN || direction == Direction.UP) {
-                        //are calculated positions
-                        BlockPos pos1 = new BlockPos(pos.getX() - 1, pos.getY(), pos.getZ());
-                        BlockPos pos2 = new BlockPos(pos.getX() + 1, pos.getY(), pos.getZ());
-                        BlockPos pos3 = new BlockPos(pos.getX(), pos.getY(), pos.getZ() + 1);
-                        BlockPos pos4 = new BlockPos(pos.getX(), pos.getY(), pos.getZ() - 1);
-                        BlockPos pos5 = new BlockPos(pos.getX() - 1, pos.getY(), pos.getZ() + 1);
-                        BlockPos pos6 = new BlockPos(pos.getX() + 1, pos.getY(), pos.getZ() + 1);
-                        BlockPos pos7 = new BlockPos(pos.getX() + 1, pos.getY(), pos.getZ() - 1);
-                        BlockPos pos8 = new BlockPos(pos.getX() - 1, pos.getY(), pos.getZ() - 1);
-                        BlockState state0 = level.getBlockState(pos);
-                        BlockState state1 = level.getBlockState(pos1);
-                        BlockState state2 = level.getBlockState(pos2);
-                        BlockState state3 = level.getBlockState(pos3);
-                        BlockState state4 = level.getBlockState(pos4);
-                        BlockState state5 = level.getBlockState(pos5);
-                        BlockState state6 = level.getBlockState(pos6);
-                        BlockState state7 = level.getBlockState(pos7);
-                        BlockState state8 = level.getBlockState(pos8);
-                        //DESTRUCTING BLOCK AROUND
                         mining = false;
-                        int i = 0;
-                        if (state0.is(Blocks.GRASS_BLOCK) && !state0.is(Blocks.AIR) || state0.is(Blocks.DIRT) && !state0.is(Blocks.AIR)) {
-                            player.level().setBlock(pos, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
+                        int damage=0;
+                        for (int i = -range; i <= range; i++){
+                            for (int j = -range; j <= range; j++) {
+                                //are calculated positions
+                                BlockPos pos1 = new BlockPos(pos.getX()+i, pos.getY(), pos.getZ()+j);
+                                BlockState state1 = level.getBlockState(pos1);
+                                //DESTRUCTING BLOCK AROUND
+                                if (state1.is(Blocks.GRASS_BLOCK) && !state1.is(Blocks.AIR) || state1.is(Blocks.DIRT) && !state1.is(Blocks.AIR)) {
+                                    player.level().setBlock(pos1, Blocks.DIRT_PATH.defaultBlockState(), 3);
+                                    damage+=1;
+                                }
+
+
+                            }
                         }
-                        if (state1.is(Blocks.GRASS_BLOCK) && !state1.is(Blocks.AIR)|| state1.is(Blocks.DIRT) && !state1.is(Blocks.AIR)) {
-                            player.level().setBlock(pos1, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state2.is(Blocks.GRASS_BLOCK) && !state2.is(Blocks.AIR) || state2.is(Blocks.DIRT) && !state2.is(Blocks.AIR)) {
-                            player.level().setBlock(pos2, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state3.is(Blocks.GRASS_BLOCK) && !state3.is(Blocks.AIR)  || state3.is(Blocks.DIRT) && !state3.is(Blocks.AIR)) {
-                            player.level().setBlock(pos3, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state4.is(Blocks.GRASS_BLOCK) && !state4.is(Blocks.AIR)  || state4.is(Blocks.DIRT) && !state4.is(Blocks.AIR)) {
-                            player.level().setBlock(pos4, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state5.is(Blocks.GRASS_BLOCK) && !state5.is(Blocks.AIR)  || state5.is(Blocks.DIRT) && !state5.is(Blocks.AIR)) {
-                            player.level().setBlock(pos5, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state6.is(Blocks.GRASS_BLOCK) && !state6.is(Blocks.AIR)  || state6.is(Blocks.DIRT) && !state6.is(Blocks.AIR)) {
-                            player.level().setBlock(pos6, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state7.is(Blocks.GRASS_BLOCK) && !state7.is(Blocks.AIR)  || state7.is(Blocks.DIRT) && !state7.is(Blocks.AIR)) {
-                            player.level().setBlock(pos7, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state8.is(Blocks.GRASS_BLOCK) && !state8.is(Blocks.AIR)  || state8.is(Blocks.DIRT) && !state6.is(Blocks.AIR)) {
-                            player.level().setBlock(pos8, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        stack.hurtAndBreak(i-1, player, EquipmentSlot.MAINHAND);
+                        stack.hurtAndBreak(damage, player, EquipmentSlot.MAINHAND);
                         mining = true;
                     } else if (direction == Direction.NORTH || direction == Direction.SOUTH) {
-                        //are calculated positions
-                        BlockPos pos1 = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                        BlockPos pos2 = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
-                        BlockPos pos3 = new BlockPos(pos.getX() + 1, pos.getY(), pos.getZ());
-                        BlockPos pos4 = new BlockPos(pos.getX() - 1, pos.getY(), pos.getZ());
-                        BlockPos pos5 = new BlockPos(pos.getX() - 1, pos.getY() + 1, pos.getZ());
-                        BlockPos pos6 = new BlockPos(pos.getX() + 1, pos.getY() - 1, pos.getZ());
-                        BlockPos pos7 = new BlockPos(pos.getX() + 1, pos.getY() + 1, pos.getZ());
-                        BlockPos pos8 = new BlockPos(pos.getX() - 1, pos.getY() - 1, pos.getZ());
-                        BlockState state0 = level.getBlockState(pos);
-                        BlockState state1 = level.getBlockState(pos1);
-                        BlockState state2 = level.getBlockState(pos2);
-                        BlockState state3 = level.getBlockState(pos3);
-                        BlockState state4 = level.getBlockState(pos4);
-                        BlockState state5 = level.getBlockState(pos5);
-                        BlockState state6 = level.getBlockState(pos6);
-                        BlockState state7 = level.getBlockState(pos7);
-                        BlockState state8 = level.getBlockState(pos8);
-                        //DESTRUCTING BLOCK AROUND
                         mining = false;
-                        int i = 0;
-                        if (state0.is(Blocks.GRASS_BLOCK) && !state0.is(Blocks.AIR) || state0.is(Blocks.DIRT) && !state0.is(Blocks.AIR)) {
-                            player.level().setBlock(pos, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
+                        int damage=0;
+                        for (int i = -range; i <= range; i++){
+                            for (int j = -range; j <= range; j++) {
+                                //are calculated positions
+                                BlockPos pos1 = new BlockPos(pos.getX()+i, pos.getY()+j, pos.getZ());
+                                BlockState state1 = level.getBlockState(pos1);
+                                //DESTRUCTING BLOCK AROUND
+                                if (state1.is(Blocks.GRASS_BLOCK) && !state1.is(Blocks.AIR) || state1.is(Blocks.DIRT) && !state1.is(Blocks.AIR)) {
+                                    player.level().setBlock(pos1, Blocks.DIRT_PATH.defaultBlockState(), 3);
+                                    damage+=1;
+                                }
+
+
+
+                            }
                         }
-                        if (state1.is(Blocks.GRASS_BLOCK) && !state1.is(Blocks.AIR)|| state1.is(Blocks.DIRT) && !state1.is(Blocks.AIR)) {
-                            player.level().setBlock(pos1, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state2.is(Blocks.GRASS_BLOCK) && !state2.is(Blocks.AIR) || state2.is(Blocks.DIRT) && !state2.is(Blocks.AIR)) {
-                            player.level().setBlock(pos2, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state3.is(Blocks.GRASS_BLOCK) && !state3.is(Blocks.AIR)  || state3.is(Blocks.DIRT) && !state3.is(Blocks.AIR)) {
-                            player.level().setBlock(pos3, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state4.is(Blocks.GRASS_BLOCK) && !state4.is(Blocks.AIR)  || state4.is(Blocks.DIRT) && !state4.is(Blocks.AIR)) {
-                            player.level().setBlock(pos4, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state5.is(Blocks.GRASS_BLOCK) && !state5.is(Blocks.AIR)  || state5.is(Blocks.DIRT) && !state5.is(Blocks.AIR)) {
-                            player.level().setBlock(pos5, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state6.is(Blocks.GRASS_BLOCK) && !state6.is(Blocks.AIR)  || state6.is(Blocks.DIRT) && !state6.is(Blocks.AIR)) {
-                            player.level().setBlock(pos6, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state7.is(Blocks.GRASS_BLOCK) && !state7.is(Blocks.AIR)  || state7.is(Blocks.DIRT) && !state7.is(Blocks.AIR)) {
-                            player.level().setBlock(pos7, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state8.is(Blocks.GRASS_BLOCK) && !state8.is(Blocks.AIR)  || state8.is(Blocks.DIRT) && !state6.is(Blocks.AIR)) {
-                            player.level().setBlock(pos8, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        stack.hurtAndBreak(i-1, player, EquipmentSlot.MAINHAND);
+                        stack.hurtAndBreak(damage, player, EquipmentSlot.MAINHAND);
                         mining = true;
                     } else if (direction == Direction.EAST || direction == Direction.WEST) {
-                        //are calculated positions
-                        BlockPos pos1 = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                        BlockPos pos2 = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
-                        BlockPos pos3 = new BlockPos(pos.getX(), pos.getY(), pos.getZ() + 1);
-                        BlockPos pos4 = new BlockPos(pos.getX(), pos.getY(), pos.getZ() - 1);
-                        BlockPos pos5 = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ() + 1);
-                        BlockPos pos6 = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ() + 1);
-                        BlockPos pos7 = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ() - 1);
-                        BlockPos pos8 = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ() - 1);
-                        BlockState state0 = level.getBlockState(pos);
-                        BlockState state1 = level.getBlockState(pos1);
-                        BlockState state2 = level.getBlockState(pos2);
-                        BlockState state3 = level.getBlockState(pos3);
-                        BlockState state4 = level.getBlockState(pos4);
-                        BlockState state5 = level.getBlockState(pos5);
-                        BlockState state6 = level.getBlockState(pos6);
-                        BlockState state7 = level.getBlockState(pos7);
-                        BlockState state8 = level.getBlockState(pos8);
-
-                        //DESTRUCTING BLOCK AROUND
                         mining = false;
-                        int i = 0;
-                        if (state0.is(Blocks.GRASS_BLOCK) && !state0.is(Blocks.AIR) || state0.is(Blocks.DIRT) && !state0.is(Blocks.AIR)) {
-                            player.level().setBlock(pos, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
+                        int damage =0;
+                        for (int i = -range; i <= range; i++){
+                            for (int j = -range; j <= range; j++) {
+                                //are calculated positions
+                                BlockPos pos1 = new BlockPos(pos.getX(), pos.getY()+j, pos.getZ()+i);
+                                BlockState state1 = level.getBlockState(pos1);
+                                //DESTRUCTING BLOCK AROUND
+                                if (state1.is(Blocks.GRASS_BLOCK) && !state1.is(Blocks.AIR) || state1.is(Blocks.DIRT) && !state1.is(Blocks.AIR)) {
+                                    player.level().setBlock(pos1, Blocks.DIRT_PATH.defaultBlockState(), 3);
+                                    damage+=1;
+                                }
+
+
+                            }
                         }
-                        if (state1.is(Blocks.GRASS_BLOCK) && !state1.is(Blocks.AIR)|| state1.is(Blocks.DIRT) && !state1.is(Blocks.AIR)) {
-                            player.level().setBlock(pos1, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state2.is(Blocks.GRASS_BLOCK) && !state2.is(Blocks.AIR) || state2.is(Blocks.DIRT) && !state2.is(Blocks.AIR)) {
-                            player.level().setBlock(pos2, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state3.is(Blocks.GRASS_BLOCK) && !state3.is(Blocks.AIR)  || state3.is(Blocks.DIRT) && !state3.is(Blocks.AIR)) {
-                            player.level().setBlock(pos3, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state4.is(Blocks.GRASS_BLOCK) && !state4.is(Blocks.AIR)  || state4.is(Blocks.DIRT) && !state4.is(Blocks.AIR)) {
-                            player.level().setBlock(pos4, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state5.is(Blocks.GRASS_BLOCK) && !state5.is(Blocks.AIR)  || state5.is(Blocks.DIRT) && !state5.is(Blocks.AIR)) {
-                            player.level().setBlock(pos5, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state6.is(Blocks.GRASS_BLOCK) && !state6.is(Blocks.AIR)   && !state6.is(Blocks.DIRT_PATH)  || state6.is(Blocks.DIRT) && !state6.is(Blocks.AIR)  && !state6.is(Blocks.DIRT_PATH) ) {
-                            player.level().setBlock(pos6, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state7.is(Blocks.GRASS_BLOCK) && !state7.is(Blocks.AIR)  && !state7.is(Blocks.DIRT_PATH) || state7.is(Blocks.DIRT) && !state7.is(Blocks.AIR)  && !state7.is(Blocks.DIRT_PATH)) {
-                            player.level().setBlock(pos7, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        if (state8.is(Blocks.GRASS_BLOCK) && !state8.is(Blocks.AIR) && !state8.is(Blocks.DIRT_PATH) || state8.is(Blocks.DIRT) && !state6.is(Blocks.AIR) && !state8.is(Blocks.DIRT_PATH)) {
-                            player.level().setBlock(pos8, Blocks.DIRT_PATH.defaultBlockState(), 3);
-                            i++;
-                        }
-                        stack.hurtAndBreak(i-1, player, EquipmentSlot.MAINHAND);
+                        stack.hurtAndBreak(damage, player, EquipmentSlot.MAINHAND);
                         mining = true;
                     }
+                }
+            } else if (miningEntity.isCrouching()) {
+                if (miningEntity instanceof ServerPlayer){
+                    ServerPlayer player = (ServerPlayer) miningEntity;
+                    player.level().setBlock(pos, Blocks.DIRT_PATH.defaultBlockState(), 3);
                 }
             }
             return InteractionResult.SUCCESS;
         }
+
+
+    }
+}
+
     }
 }
