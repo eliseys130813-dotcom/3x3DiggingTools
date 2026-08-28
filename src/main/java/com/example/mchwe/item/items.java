@@ -23,14 +23,21 @@ public class items {
             () -> new hammer(myTiers.HAMMER_NETHERITE, new Item.Properties()
                     .attributes(DiggerItem.createAttributes(Tiers.NETHERITE, 9.0F, -3.2F))
                     .durability(4061)));
-    public static final DeferredItem<Item> BIG_SHOVEL = ITEMS.register("big_shovel",
-            () -> new big_shovel(myTiers.SHOVEL_IRON, new Item.Properties()
-                    .attributes(DiggerItem.createAttributes(Tiers.IRON, 9.0F, -3.2F))
-                    .durability(750)));
     public static final DeferredItem<Item> NETHERITE_SLEDGEHAMMER = ITEMS.register("netherite_sledgehammer",
             () -> new sledgehammer(myTiers.SLEDGEHAMMER_NETHERITE, new Item.Properties()
                     .attributes(DiggerItem.createAttributes(Tiers.NETHERITE, 9.0F, -3.2F))
                     .durability(4061)));
+    public static final DeferredItem<Item> BIG_SHOVEL = ITEMS.register("big_shovel",
+            () -> new big_shovel(myTiers.SHOVEL_IRON, new Item.Properties()));
+
+    public static final DeferredItem<Item> BIG_DIAMOND_SHOVEL = ITEMS.register("big_diamond_shovel",
+            () -> new big_shovel(myTiers.SHOVEL_DIAMOND, new Item.Properties()));
+
+    public static final DeferredItem<Item> BIG_NETHERITE_SHOVEL = ITEMS.register("big_netherite_shovel",
+            () -> new big_shovel(myTiers.SHOVEL_NETHERITE, new Item.Properties()));
+    public static final DeferredItem<Item> LARGE_NETHERITE_SHOVEL = ITEMS.register("large_netherite_shovel",
+            () -> new large_shovel(myTiers.LARGE_SHOVEL_NETHERITE, new Item.Properties()));
+
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
