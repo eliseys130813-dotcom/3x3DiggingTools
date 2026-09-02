@@ -1,7 +1,12 @@
 {
   "item.threexthreemod.hammer": "hammer",
-  "item.threexthreemod.big_shovel": "shovel(It's unfinished, so there's no crafting.)",
+  "item.threexthreemod.big_shovel": "shovel",
   "item.threexthreemod.netherite_hammer": "netherite hammer",
   "item.threexthreemod.diamond_hammer": "diamond hammer",
-  "item.threexthreemod.netherite_sledgehammmer": "netherite sledgehammer"
+  "item.threexthreemod.netherite_sledgehammmer": "netherite sledgehammer",
+  "item.threexthreemod.big_diamond_shovel": "big diamond shovel",
+  "item.threexthreemod.big_netherite_shovel": "big netherite shovel",
+  "item.threexthreemod.large_netherite_shovel": "large netherite shovel",
+  "item.threexthreemod.3x3placer": "diamond glove",
+  "item.threexthreemod.5x5placer": "netherite glove"
 }

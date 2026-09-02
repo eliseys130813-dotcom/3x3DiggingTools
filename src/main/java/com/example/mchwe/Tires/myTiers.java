@@ -46,6 +46,28 @@ public class myTiers {
             14,
             Tiers.NETHERITE::getRepairIngredient
     );
-
-
+    public static final Tier SHOVEL_DIAMOND = new SimpleTier(
+            Tiers.DIAMOND.getIncorrectBlocksForDrops(),
+            Tiers.DIAMOND.getUses()*3,
+            Tiers.DIAMOND.getSpeed(),
+            13F,
+            14,
+            Tiers.DIAMOND::getRepairIngredient
+    );
+    public static final Tier SHOVEL_NETHERITE = new SimpleTier(
+            Tiers.NETHERITE.getIncorrectBlocksForDrops(),
+            Tiers.NETHERITE.getUses()*3,
+            Tiers.NETHERITE.getSpeed(),
+            15F,
+            14,
+            Tiers.NETHERITE::getRepairIngredient
+    );
+    public static final Tier LARGE_SHOVEL_NETHERITE = new SimpleTier(
+            Tiers.NETHERITE.getIncorrectBlocksForDrops(),
+            Tiers.NETHERITE.getUses()*4,
+            Tiers.NETHERITE.getSpeed(),
+            20F,
+            14,
+            Tiers.NETHERITE::getRepairIngredient
+    );
 }

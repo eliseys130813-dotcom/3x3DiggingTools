@@ -1,7 +1,12 @@
 {
   "item.threexthreemod.hammer": "молот",
-  "item.threexthreemod.big_shovel": "лопата(неготово и поэтому нет крафта)",
+  "item.threexthreemod.big_shovel": "большая лопата",
   "item.threexthreemod.netherite_hammer": "незеритовый молот",
   "item.threexthreemod.diamond_hammer": "алмазный молот",
-  "item.threexthreemod.netherite_sledgehammer": "незеритовая кувалда"
+  "item.threexthreemod.netherite_sledgehammer": "незеритовая кувалда",
+  "item.threexthreemod.big_diamond_shovel": "большая алмазная лопата",
+  "item.threexthreemod.big_netherite_shovel": "большая незеритовая лопата",
+  "item.threexthreemod.large_netherite_shovel": "огромная незеритовая лопата",
+  "item.threexthreemod.3x3placer": "алмазная перчатка",
+  "item.threexthreemod.5x5placer": "незеритовая перчатка"
 }

@@ -4,10 +4,10 @@
 	"texture_size": [8, 8],
 	"textures": {
 		"0": "threexthreemod:item/texture3",
-		"1": "threexthreemod:item/texture4",
-		"2": "threexthreemod:item/texture5",
-		"3": "threexthreemod:item/texture6",
-		"4": "threexthreemod:item/texture7",
+		"1": "threexthreemod:item/texture15",
+		"2": "threexthreemod:item/texture14",
+		"3": "threexthreemod:item/texture9",
+		"4": "threexthreemod:item/texture8",
 		"particle": "threexthreemod:item/texture3"
 	},
 	"elements": [

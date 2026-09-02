@@ -220,6 +220,3 @@ public class big_shovel extends DiggerItem {
 
     }
 }
-
-    }
-}

@@ -37,7 +37,10 @@ public class items {
             () -> new big_shovel(myTiers.SHOVEL_NETHERITE, new Item.Properties()));
     public static final DeferredItem<Item> LARGE_NETHERITE_SHOVEL = ITEMS.register("large_netherite_shovel",
             () -> new large_shovel(myTiers.LARGE_SHOVEL_NETHERITE, new Item.Properties()));
-
+    public static final DeferredItem<Item> PLACER3X3 = ITEMS.register("3x3placer",
+            () -> new PlaceRangeXRange(new Item.Properties().durability(3000)));
+    public static final DeferredItem<Item> PLACER5X5 = ITEMS.register("5x5placer",
+            () -> new PlaceRangeXRange(new Item.Properties().durability(25000)));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

@@ -1,7 +1,7 @@
 {
   "type": "minecraft:smithing_transform",
   "base": {
-    "item": "threexthreemod:diamond_hammer"
+    "item": "threexthreemod:3x3placer"
   },
   "addition": {
     "item": "minecraft:netherite_ingot"
@@ -10,6 +10,6 @@
     "item": "minecraft:netherite_upgrade_smithing_template"
   },
   "result": {
-    "id": "threexthreemod:netherite_hammer"
+    "id": "threexthreemod:5x5placer"
   }
 }
