@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.slf4j.Logger;
 
@@ -71,6 +72,37 @@ public class threexthreemod {
 
             return (Player) event.getPlayer();
 
+    }
+    @SubscribeEvent
+    public void onBreakSpeed(PlayerEvent.BreakSpeed event) {
+        var player = event.getEntity();
+        if (player == null) return;
+
+        ItemStack mainHand = player.getMainHandItem();
+        if (mainHand.is(items.PLACER3X3.get()) || mainHand.is(items.PLACER5X5.get())) {
+            ItemStack offhandItem = player.getItemInHand(InteractionHand.OFF_HAND);
+            if (offhandItem.isEmpty()) return;
+
+            BlockState targetBlock = event.getState();
+            if (offhandItem.getItem() instanceof PickaxeItem) {
+                if (offhandItem.isCorrectToolForDrops(targetBlock)) {
+                    float speed = offhandItem.getDestroySpeed(targetBlock);
+                    event.setNewSpeed(speed);
+                }
+            }
+            else if (offhandItem.getItem() instanceof AxeItem) {
+                if (offhandItem.isCorrectToolForDrops(targetBlock)) {
+                    float speed = offhandItem.getDestroySpeed(targetBlock);
+                    event.setNewSpeed(speed);
+                }
+            }
+            else if (offhandItem.getItem() instanceof ShovelItem) {
+                if (offhandItem.isCorrectToolForDrops(targetBlock)) {
+                    float speed = offhandItem.getDestroySpeed(targetBlock);
+                    event.setNewSpeed(speed);
+                }
+            }
+        }
     }
     @SubscribeEvent
     public void blockPlacing3x3(BlockEvent.EntityPlaceEvent event) {
@@ -152,6 +184,25 @@ public class threexthreemod {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+    @SubscribeEvent
+    public void onHarvest(PlayerEvent.HarvestCheck event){
+        var player = event.getEntity();
+        if (player == null) return;
+
+        ItemStack mainHand = player.getMainHandItem();
+        if (mainHand.is(items.PLACER3X3.get()) || mainHand.is(items.PLACER5X5.get())) {
+            ItemStack offhandItem = player.getOffhandItem();
+            if (offhandItem.isEmpty()) return;
+
+            BlockState targetBlock = event.getLevel().getBlockState(event.getPos());
+
+            if (offhandItem.getItem() instanceof DiggerItem) {
+                if (offhandItem.isCorrectToolForDrops(targetBlock)) {
+                    event.setCanHarvest(true);
                 }
             }
         }
@@ -286,7 +337,12 @@ public void blockBreaking(BlockEvent.BreakEvent event){
             event.accept(items.DIAMOND_HAMMER.get());
             event.accept(items.NETHERITE_HAMMER.get());
             event.accept(items.NETHERITE_SLEDGEHAMMER.get());
-
+            event.accept(items.BIG_SHOVEL.get());
+            event.accept(items.BIG_DIAMOND_SHOVEL.get());
+            event.accept(items.BIG_NETHERITE_SHOVEL.get());
+            event.accept(items.LARGE_NETHERITE_SHOVEL.get());
+            event.accept(items.PLACER3X3.get());
+            event.accept(items.PLACER5X5.get());
 
         }
     }
