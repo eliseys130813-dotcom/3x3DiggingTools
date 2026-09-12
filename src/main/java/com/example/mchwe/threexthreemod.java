@@ -82,24 +82,10 @@ public class threexthreemod {
         if (mainHand.is(items.PLACER3X3.get()) || mainHand.is(items.PLACER5X5.get())) {
             ItemStack offhandItem = player.getItemInHand(InteractionHand.OFF_HAND);
             if (offhandItem.isEmpty()) return;
-
-            BlockState targetBlock = event.getState();
-            if (offhandItem.getItem() instanceof PickaxeItem) {
-                if (offhandItem.isCorrectToolForDrops(targetBlock)) {
-                    float speed = offhandItem.getDestroySpeed(targetBlock);
-                    event.setNewSpeed(speed);
-                }
-            }
-            else if (offhandItem.getItem() instanceof AxeItem) {
-                if (offhandItem.isCorrectToolForDrops(targetBlock)) {
-                    float speed = offhandItem.getDestroySpeed(targetBlock);
-                    event.setNewSpeed(speed);
-                }
-            }
-            else if (offhandItem.getItem() instanceof ShovelItem) {
-                if (offhandItem.isCorrectToolForDrops(targetBlock)) {
-                    float speed = offhandItem.getDestroySpeed(targetBlock);
-                    event.setNewSpeed(speed);
+            BlockState BlockMat = event.getState();
+            if (offhandItem.getItem() instanceof DiggerItem) {
+                if (offhandItem.isCorrectToolForDrops(BlockMat)) {
+                    event.setNewSpeed(offhandItem.getDestroySpeed(BlockMat));
                 }
             }
         }
