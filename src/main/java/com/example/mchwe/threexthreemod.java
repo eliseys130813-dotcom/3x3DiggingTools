@@ -1,7 +1,13 @@
 package com.example.mchwe;
 
+import com.example.mchwe.item.PlaceRangeXRange;
 import com.example.mchwe.item.items;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,7 +23,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.slf4j.Logger;
 
@@ -39,7 +47,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 @Mod(threexthreemod.MODID)
 public class threexthreemod {
     private boolean isPlacing3x3 = false;
-    public boolean mining=true;
+    public boolean mining = true;
     public BlockPos getPlaceBlockPos(BlockEvent.EntityPlaceEvent event){
         return event.getPos();
     }
@@ -92,86 +100,129 @@ public class threexthreemod {
     }
     @SubscribeEvent
     public void blockPlacing3x3(BlockEvent.EntityPlaceEvent event) {
-
+        int r = 1;
+        Player player = getPlayer(event);
+        ServerPlayer splayer = (ServerPlayer) getPlayer(event);
         if (this.isPlacing3x3) {
             return;
         }
         BlockPos pos = getPlaceBlockPos(event);
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
-            ItemStack stack=player.getMainHandItem();
-            int r = 1;
-            if (player.getMainHandItem().is(items.PLACER5X5.get())) {
-                r = 2;
-            }
-            if (player.getOffhandItem().getItem() instanceof DiggerItem){
-                stack = player.getOffhandItem();
-            }
-            if (player.getMainHandItem().is(items.PLACER3X3.get()) && !player.getOffhandItem().isEmpty() || player.getMainHandItem().is(items.PLACER5X5.get()) && !player.getOffhandItem().isEmpty()) {
-                if (player instanceof ServerPlayer) {
-                    ServerPlayer splayer = (ServerPlayer) player;
-                    if (!player.isCrouching()) {
-                        if (getDir(event) == Direction.UP || getDir(event) == Direction.DOWN) {
-                            try {
-                                this.isPlacing3x3 = true;
-                                for (int i = -r; i <= r; i++) {
-                                    for (int j = -r; j <= r; j++) {
-                                        //are calculated positions
-                                        BlockPos pos1 = new BlockPos(pos.getX() + i, pos.getY(), pos.getZ() + j);
-                                        BlockState state1 = event.getLevel().getBlockState(pos1);
-                                        //PLACING BLOCK AROUND
-                                        if (!state1.is(Blocks.BEDROCK) && !pos1.equals(pos)) {
-                                            splayer.gameMode.useItemOn(splayer, splayer.level(), splayer.getOffhandItem(), InteractionHand.OFF_HAND, new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos1), net.minecraft.core.Direction.UP, pos1, false));
-                                            player.getMainHandItem().hurtAndBreak(1, splayer, EquipmentSlot.MAINHAND);
+
+        if (player.getMainHandItem().is(items.PLACER5X5.get())){
+            r = 2;
+        }
+        if (!(getPlayer(event).getOffhandItem().getItem() instanceof DiggerItem)) {
+
+            if (event.getEntity() instanceof Player) {
+                ItemStack stack = player.getMainHandItem();
+
+                if (player.getOffhandItem().getItem() instanceof DiggerItem) {
+                    stack = player.getOffhandItem();
+                }
+                if (player.getMainHandItem().is(items.PLACER3X3.get()) && !player.getOffhandItem().isEmpty() || player.getMainHandItem().is(items.PLACER5X5.get()) && !player.getOffhandItem().isEmpty()) {
+                    if (player instanceof ServerPlayer) {
+                        if (!player.isCrouching()) {
+                            if (getDir(event) == Direction.UP || getDir(event) == Direction.DOWN) {
+                                try {
+                                    this.isPlacing3x3 = true;
+                                    for (int i = -r; i <= r; i++) {
+                                        for (int j = -r; j <= r; j++) {
+                                            //are calculated positions
+                                            BlockPos pos1 = new BlockPos(pos.getX() + i, pos.getY(), pos.getZ() + j);
+                                            BlockState state1 = event.getLevel().getBlockState(pos1);
+                                            //PLACING BLOCK AROUND
+                                            if (!state1.is(Blocks.BEDROCK) && !pos1.equals(pos)) {
+                                                splayer.gameMode.useItemOn(splayer, splayer.level(), splayer.getOffhandItem(), InteractionHand.OFF_HAND, new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos1), net.minecraft.core.Direction.UP, pos1, false));
+                                                player.getMainHandItem().hurtAndBreak(1, splayer, EquipmentSlot.MAINHAND);
+                                            }
                                         }
                                     }
+                                    player.getMainHandItem().hurtAndBreak(1, splayer, EquipmentSlot.MAINHAND);
+                                } finally {
+                                    this.isPlacing3x3 = false;
                                 }
-                                player.getMainHandItem().hurtAndBreak(1, splayer, EquipmentSlot.MAINHAND);
-                            } finally {
-                                this.isPlacing3x3 = false;
-                            }
-                        } else if (getDir(event) == Direction.NORTH || getDir(event) == Direction.SOUTH) {
-                            try {
-                                this.isPlacing3x3 = true;
-                                for (int i = -r; i <= r; i++) {
-                                    for (int j = -r; j <= r; j++) {
-                                        //are calculated positions
-                                        BlockPos pos1 = new BlockPos(pos.getX() + i, pos.getY() + j, pos.getZ());
-                                        BlockState state1 = event.getLevel().getBlockState(pos1);
-                                        //PLACING BLOCK AROUND
-                                        if (!state1.is(Blocks.BEDROCK) && !pos1.equals(pos)) {
-                                            splayer.gameMode.useItemOn(splayer, splayer.level(), splayer.getOffhandItem(), InteractionHand.OFF_HAND, new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos1), net.minecraft.core.Direction.UP, pos1, false));
-                                            player.getMainHandItem().hurtAndBreak(1, splayer, EquipmentSlot.MAINHAND);
+                            } else if (getDir(event) == Direction.NORTH || getDir(event) == Direction.SOUTH) {
+                                try {
+                                    this.isPlacing3x3 = true;
+                                    for (int i = -r; i <= r; i++) {
+                                        for (int j = -r; j <= r; j++) {
+                                            //are calculated positions
+                                            BlockPos pos1 = new BlockPos(pos.getX() + i, pos.getY() + j, pos.getZ());
+                                            BlockState state1 = event.getLevel().getBlockState(pos1);
+                                            //PLACING BLOCK AROUND
+                                            if (!state1.is(Blocks.BEDROCK) && !pos1.equals(pos)) {
+                                                splayer.gameMode.useItemOn(splayer, splayer.level(), splayer.getOffhandItem(), InteractionHand.OFF_HAND, new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos1), net.minecraft.core.Direction.UP, pos1, false));
+                                                player.getMainHandItem().hurtAndBreak(1, splayer, EquipmentSlot.MAINHAND);
+                                            }
                                         }
                                     }
+                                    player.getMainHandItem().hurtAndBreak(1, splayer, EquipmentSlot.MAINHAND);
+                                } finally {
+                                    this.isPlacing3x3 = false;
                                 }
-                                player.getMainHandItem().hurtAndBreak(1, splayer, EquipmentSlot.MAINHAND);
-                            } finally {
-                                this.isPlacing3x3 = false;
-                            }
-                        } else if (getDir(event) == Direction.EAST || getDir(event) == Direction.WEST) {
-                            try {
-                                this.isPlacing3x3 = true;
-                                for (int i = -r; i <= r; i++) {
-                                    for (int j = -r; j <= r; j++) {
-                                        //are calculated positions
-                                        BlockPos pos1 = new BlockPos(pos.getX(), pos.getY() + j, pos.getZ() + i);
-                                        BlockState state1 = event.getLevel().getBlockState(pos1);
-                                        //PLACING BLOCK AROUND
-                                        if (!state1.is(Blocks.BEDROCK) && !pos1.equals(pos)) {
-                                            splayer.gameMode.useItemOn(splayer, splayer.level(), splayer.getOffhandItem(), InteractionHand.OFF_HAND, new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos1), net.minecraft.core.Direction.UP, pos1, false));
-                                            player.getMainHandItem().hurtAndBreak(1, splayer, EquipmentSlot.MAINHAND);
+                            } else if (getDir(event) == Direction.EAST || getDir(event) == Direction.WEST) {
+                                try {
+                                    this.isPlacing3x3 = true;
+                                    for (int i = -r; i <= r; i++) {
+                                        for (int j = -r; j <= r; j++) {
+                                            //are calculated positions
+                                            BlockPos pos1 = new BlockPos(pos.getX(), pos.getY() + j, pos.getZ() + i);
+                                            BlockState state1 = event.getLevel().getBlockState(pos1);
+                                            //PLACING BLOCK AROUND
+                                            if (!state1.is(Blocks.BEDROCK) && !pos1.equals(pos)) {
+                                                splayer.gameMode.useItemOn(splayer, splayer.level(), splayer.getOffhandItem(), InteractionHand.OFF_HAND, new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos1), net.minecraft.core.Direction.UP, pos1, false));
+                                                player.getMainHandItem().hurtAndBreak(1, splayer, EquipmentSlot.MAINHAND);
+                                            }
                                         }
                                     }
+                                    player.getMainHandItem().hurtAndBreak(1, splayer, EquipmentSlot.MAINHAND);
+                                } finally {
+                                    this.isPlacing3x3 = false;
                                 }
-                                player.getMainHandItem().hurtAndBreak(1, splayer, EquipmentSlot.MAINHAND);
-                            } finally {
-                                this.isPlacing3x3 = false;
                             }
                         }
                     }
                 }
             }
+        } else if (getPlayer(event).getOffhandItem().getItem() instanceof DiggerItem){
+            if (getTargetedFace() == Direction.UP || getTargetedFace() == Direction.DOWN){
+                for (int j = -r; j<r; j++) {
+                    for (int i = -r; i < r; i++) {
+                        BlockPos pos1 = new BlockPos(pos.getX() + i, pos.getY(), pos.getZ() + j);
+                        BlockState state1 = event.getLevel().getBlockState(pos1);
+                        //PLACING BLOCK AROUND
+                        if (!state1.is(Blocks.BEDROCK) && !pos1.equals(pos)) {
+                            splayer.gameMode.useItemOn(splayer, splayer.level(), splayer.getOffhandItem(), InteractionHand.OFF_HAND, new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos1), net.minecraft.core.Direction.UP, pos1, false));
+                            player.getOffhandItem().hurtAndBreak(1, splayer, EquipmentSlot.OFFHAND);
+                        }
+                    }
+                }
+            } else if (getTargetedFace() == Direction.WEST || getTargetedFace() == Direction.EAST){
+                for (int j = -r; j<r; j++) {
+                    for (int i = -r; i < r; i++) {
+                        BlockPos pos1 = new BlockPos(pos.getX() + i, pos.getY()+j, pos.getZ());
+                        BlockState state1 = event.getLevel().getBlockState(pos1);
+                        //PLACING BLOCK AROUND
+                        if (!state1.is(Blocks.BEDROCK) && !pos1.equals(pos)) {
+                            splayer.gameMode.useItemOn(splayer, splayer.level(), splayer.getOffhandItem(), InteractionHand.OFF_HAND, new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos1), Direction.WEST, pos1, false));
+                            player.getOffhandItem().hurtAndBreak(1, splayer, EquipmentSlot.OFFHAND);
+                        }
+                    }
+                }
+            } else if (getTargetedFace() == Direction.SOUTH || getTargetedFace() == Direction.NORTH) {
+                for (int j = -r; j<r; j++) {
+                    for (int i = -r; i < r; i++) {
+                        BlockPos pos1 = new BlockPos(pos.getX(), pos.getY() + j, pos.getZ() + i);
+                        BlockState state1 = event.getLevel().getBlockState(pos1);
+                        //PLACING BLOCK AROUND
+                        if (!state1.is(Blocks.BEDROCK) && !pos1.equals(pos)) {
+                            splayer.gameMode.useItemOn(splayer, splayer.level(), splayer.getOffhandItem(), InteractionHand.OFF_HAND, new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos1), Direction.SOUTH, pos1, false));
+                            player.getOffhandItem().hurtAndBreak(1, splayer, EquipmentSlot.OFFHAND);
+                        }
+                    }
+                }
+            }
+
         }
     }
     @SubscribeEvent
@@ -339,3 +390,4 @@ public void blockBreaking(BlockEvent.BreakEvent event){
 
     }
 }
+
