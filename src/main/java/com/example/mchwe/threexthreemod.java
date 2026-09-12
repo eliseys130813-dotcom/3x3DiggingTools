@@ -64,7 +64,7 @@ public class threexthreemod {
 
         if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK) {
             BlockHitResult blockHit = (BlockHitResult) mc.hitResult;
-            return blockHit.getDirection(); // Возвращает Direction
+            return blockHit.getDirection();
         }
 
         return null;
